@@ -17,9 +17,14 @@ package com.nttdata.bootcamp.master.controller;
 import com.nttdata.bootcamp.master.model.document.DocumentType;
 import com.nttdata.bootcamp.master.service.DocumentTypeService;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.http.HttpStatus;
+import org.springframework.http.MediaType;
+import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 import reactor.core.publisher.Flux;
 import reactor.core.publisher.Mono;
+
+import javax.ws.rs.core.Response;
 
 /**
  * Clase de controladora para invocar a métodos CRUD con rest api.
@@ -37,8 +42,9 @@ public class DocumentTypeController {
      * @return Mono retorna el DocumentType, tipo Mono
      */
     @PostMapping
-    public Mono<DocumentType> create(@RequestBody DocumentType documentType){
-        return this.documentTypeService.insert(documentType);
+    public Mono<ResponseEntity<DocumentType>> create(@RequestBody DocumentType documentType){
+        return this.documentTypeService.insert(documentType)
+                .map(d -> new ResponseEntity<>(d, HttpStatus.OK));
     }
 
     /**
@@ -46,8 +52,9 @@ public class DocumentTypeController {
      * @return Mono retorna el DocumentType, tipo Mono
      */
     @PutMapping
-    public Mono<DocumentType> update(@RequestBody DocumentType documentType){
-        return this.documentTypeService.update(documentType);
+    public Mono<ResponseEntity<DocumentType>> update(@RequestBody DocumentType documentType){
+        return this.documentTypeService.update(documentType)
+                .map(d -> new ResponseEntity<>(d, HttpStatus.OK));
     }
 
     /**
@@ -55,8 +62,9 @@ public class DocumentTypeController {
      * @return Mono retorna el Void, tipo Mono
      */
     @DeleteMapping("/{id}")
-    public Mono<Void> delete(@PathVariable String id){
-        return this.documentTypeService.delete(id);
+    public Mono<ResponseEntity<Void>> delete(@PathVariable String id){
+        return this.documentTypeService.delete(id)
+                .map(v -> new ResponseEntity<>(v, HttpStatus.OK));
     }
 
     /**
@@ -64,8 +72,11 @@ public class DocumentTypeController {
      * @return Mono retorna el DocumentType, tipo String
      */
     @GetMapping("/{id}")
-    public Mono<DocumentType> find(@PathVariable String id){
-        return this.documentTypeService.find(id);
+    public Mono<ResponseEntity<DocumentType>> find(@PathVariable String id){
+        return this.documentTypeService.find(id)
+                .map(documentType -> ResponseEntity.ok()
+                        .contentType(MediaType.APPLICATION_JSON)
+                        .body(documentType));
     }
 
     /**
@@ -73,8 +84,11 @@ public class DocumentTypeController {
      * @return Mono retorna el DocumentType, tipo String
      */
     @GetMapping("/findByCode/{code}")
-    public Mono<DocumentType> findByCode(@PathVariable String code){
-        return this.documentTypeService.findByCode(code);
+    public Mono<ResponseEntity<DocumentType>> findByCode(@PathVariable String code){
+        return this.documentTypeService.findByCode(code)
+                .map(documentType -> ResponseEntity.ok()
+                .contentType(MediaType.APPLICATION_JSON)
+                .body(documentType));
     }
 
     /**
@@ -82,8 +96,12 @@ public class DocumentTypeController {
      * @return Flux retorna el DocumentType, tipo Flux
      */
     @GetMapping
-    public Flux<DocumentType> findAll() {
-        return this.documentTypeService.findAll();
+    public Mono<ResponseEntity<Flux<DocumentType>>> findAll() {
+        return Mono.just(
+                ResponseEntity.ok()
+                        .contentType(MediaType.APPLICATION_JSON)
+                        .body(this.documentTypeService.findAll())
+        );
     }
 
 }

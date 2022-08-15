@@ -17,6 +17,9 @@ package com.nttdata.bootcamp.master.controller;
 import com.nttdata.bootcamp.master.model.document.Person;
 import com.nttdata.bootcamp.master.service.PersonService;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.http.HttpStatus;
+import org.springframework.http.MediaType;
+import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 import reactor.core.publisher.Flux;
 import reactor.core.publisher.Mono;
@@ -37,8 +40,9 @@ public class PersonController {
      * @return Mono retorna el Person, tipo Mono
      */
     @PostMapping
-    public Mono<Person> create(@RequestBody Person person){
-        return this.personService.insert(person);
+    public Mono<ResponseEntity<Person>> create(@RequestBody Person person){
+        return this.personService.insert(person)
+                .map(p -> new ResponseEntity<>(p, HttpStatus.OK));
     }
 
     /**
@@ -46,8 +50,9 @@ public class PersonController {
      * @return Mono retorna el Person, tipo Mono
      */
     @PutMapping
-    public Mono<Person> update(@RequestBody Person person){
-        return this.personService.update(person);
+    public Mono<ResponseEntity<Person>> update(@RequestBody Person person){
+        return this.personService.update(person)
+                .map(p -> new ResponseEntity<>(p, HttpStatus.OK));
     }
 
     /**
@@ -55,8 +60,9 @@ public class PersonController {
      * @return Mono retorna el Void, tipo Mono
      */
     @DeleteMapping("/{id}")
-    public Mono<Void> delete(@PathVariable String id){
-        return this.personService.delete(id);
+    public Mono<ResponseEntity<Void>> delete(@PathVariable String id){
+        return this.personService.delete(id)
+                .map(v -> new ResponseEntity<>(v, HttpStatus.OK));
     }
 
     /**
@@ -64,8 +70,11 @@ public class PersonController {
      * @return Mono retorna el Person, tipo String
      */
     @GetMapping("/{id}")
-    public Mono<Person> find(@PathVariable String id){
-        return this.personService.find(id);
+    public Mono<ResponseEntity<Person>> find(@PathVariable String id){
+        return this.personService.find(id)
+                .map(person -> ResponseEntity.ok()
+                        .contentType(MediaType.APPLICATION_JSON)
+                        .body(person));
     }
 
     /**
@@ -73,8 +82,11 @@ public class PersonController {
      * @return Mono retorna el Person, tipo String
      */
     @GetMapping("/findByCode/{code}")
-    public Mono<Person> findByCode(@PathVariable String code){
-        return this.personService.findByCode(code);
+    public Mono<ResponseEntity<Person>> findByCode(@PathVariable String code){
+        return this.personService.findByCode(code)
+                .map(person -> ResponseEntity.ok()
+                        .contentType(MediaType.APPLICATION_JSON)
+                        .body(person));
     }
 
     /**
@@ -82,8 +94,11 @@ public class PersonController {
      * @return Flux retorna el Person, tipo Flux
      */
     @GetMapping
-    public Flux<Person> findAll(){
-        return this.personService.findAll();
+    public Mono<ResponseEntity<Flux<Person>>> findAll(){
+        return Mono.just(
+                ResponseEntity.ok()
+                        .contentType(MediaType.APPLICATION_JSON)
+                        .body(this.personService.findAll()));
     }
 
 }
