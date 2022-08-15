@@ -1,0 +1,12 @@
+spring:
+  application:
+    name: master
+  data:
+    mongodb:
+      uri: mongodb://localhost:27017/db_bank_master
+  cloud:
+    config:
+      uri: http://localhost:8084
+      username: root
+      password: rHQPJeecA3YTdVkX
+
