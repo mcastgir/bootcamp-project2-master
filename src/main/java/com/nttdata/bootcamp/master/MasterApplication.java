@@ -26,7 +26,6 @@ import org.springframework.cloud.netflix.eureka.EnableEurekaClient;
  * Clase para iniciar el microservicio.
  */
 @EnableEurekaClient
-@EnableDiscoveryClient
 @SpringBootApplication
 public class MasterApplication implements CommandLineRunner {
 
